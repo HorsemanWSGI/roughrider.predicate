@@ -1,11 +1,11 @@
-from .validation import OR, Validator, resolve_validators
-from .validation import Error, ConstraintsErrors
+from .validators import Or, Validator, resolve_validators
+from .errors import Error, ConstraintsErrors
 
 
 __all__ = [
     'Error',
     'ConstraintsErrors',
-    'OR',
+    'Or',
     'Validator',
     'resolve_validators'
 ]
