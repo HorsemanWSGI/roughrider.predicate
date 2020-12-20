@@ -1,11 +1,11 @@
 import pytest
-from roughrider.predicate.errors import Error, ConstraintsErrors
+from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
 
 
 def test_error():
-    error = Error('test')
+    error = ConstraintError('test')
     assert error.message == 'test'
-    assert error == Error('test')
+    assert error == ConstraintError('test')
     assert not error == 'test'
 
     with pytest.raises(AttributeError) as exc:
@@ -13,8 +13,8 @@ def test_error():
 
 
 def test_errors():
-    error1 = Error('test 1')
-    error2 = Error('test 2')
+    error1 = ConstraintError('test 1')
+    error2 = ConstraintError('test 2')
 
     errors = ConstraintsErrors(error1, error2)
     assert len(errors) == 2

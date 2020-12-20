@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Iterable, Tuple, Optional, Callable, Any, Union
-from roughrider.predicate.errors import Error, ConstraintsErrors
+from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
 
 
 class Validator(ABC):
@@ -10,7 +10,7 @@ class Validator(ABC):
 
     @abstractmethod
     def __call__(self, *args, **namespace) -> None:
-        """Raises a roughrider.predicate.Error if the validation failed.
+        """Raises a roughrider.predicate.ConstraintError if the validation failed.
         """
 
 
@@ -25,7 +25,7 @@ class Or(Tuple[Constraint], Validator):
             try:
                 validator(*args, **namespace)
                 return
-            except Error as exc:
+            except ConstraintError as exc:
                 errors.append(exc)
             except ConstraintsErrors as exc:
                 errors.extend(exc.errors)
@@ -33,13 +33,14 @@ class Or(Tuple[Constraint], Validator):
         raise ConstraintsErrors(*errors)
 
 
-def resolve_validators(validators: Iterable[Constraint],
-                       *args, **namespace) -> Optional[ConstraintsErrors]:
+def resolve_validators(
+        validators: Iterable[Constraint], *args, **namespace
+) -> Optional[ConstraintsErrors]:
     errors = []
     for validator in validators:
         try:
             validator(*args, **namespace)
-        except Error as exc:
+        except ConstraintError as exc:
             errors.append(exc)
         except ConstraintsErrors as exc:
             errors.extends(exc.errors)

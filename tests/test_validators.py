@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from roughrider.predicate.errors import Error, ConstraintsErrors
+from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
 from roughrider.predicate.validators import Validator, Or, resolve_validators
 
 
@@ -14,14 +14,14 @@ def non_empty_document(item):
     """Implementation of a validator/predicate
     """
     if not item.body:
-        raise Error('Body is empty.')
+        raise ConstraintError('Body is empty.')
 
 
 def must_be_real_document(item):
     """Implementation of a validator/predicate
     """
     if item.id == 'test':
-        raise Error('The item must not be a test document.')
+        raise ConstraintError('The item must not be a test document.')
 
 
 class ContentType(Validator):
@@ -31,7 +31,8 @@ class ContentType(Validator):
 
     def __call__(self, item):
         if item.content_type != self.ct:
-            raise Error(f'Expected {self.ct} and not {item.content_type}.')
+            raise ConstraintError(
+                f'Expected {self.ct}, got {item.content_type}.')
 
 
 class TestFunctionValidators:
@@ -44,7 +45,7 @@ class TestFunctionValidators:
         document = Document(id='test', body='')
         errors = resolve_validators([non_empty_document], document)
         assert isinstance(errors, ConstraintsErrors)
-        assert list(errors) == [Error('Body is empty.')]
+        assert list(errors) == [ConstraintError('Body is empty.')]
 
 
     def test_multiple_resolution(self):
@@ -52,15 +53,15 @@ class TestFunctionValidators:
         errors = resolve_validators(
             [non_empty_document, must_be_real_document], document)
         assert list(errors) == [
-            Error('The item must not be a test document.')
+            ConstraintError('The item must not be a test document.')
         ]
 
         document = Document(id='test')
         errors = resolve_validators(
             [non_empty_document, must_be_real_document], document)
         assert list(errors) == [
-            Error('Body is empty.'),
-            Error('The item must not be a test document.')
+            ConstraintError('Body is empty.'),
+            ConstraintError('The item must not be a test document.')
         ]
 
 
@@ -74,7 +75,7 @@ class TestValidators:
 
         errors = resolve_validators([ContentType('text/html')], document)
         assert list(errors) == [
-            Error('Expected text/html and not text/plain.')
+            ConstraintError('Expected text/html, got text/plain.')
         ]
 
     def test_multiple_resolution(self):
@@ -85,7 +86,7 @@ class TestValidators:
             must_be_real_document
         ], document)
         assert list(errors) == [
-            Error('The item must not be a test document.')
+            ConstraintError('The item must not be a test document.')
         ]
 
         errors = resolve_validators([
@@ -93,8 +94,8 @@ class TestValidators:
             must_be_real_document
         ], document)
         assert list(errors) == [
-            Error('Expected text/html and not text/plain.'),
-            Error('The item must not be a test document.')
+            ConstraintError('Expected text/html, got text/plain.'),
+            ConstraintError('The item must not be a test document.')
         ]
 
         document = Document(
@@ -123,11 +124,10 @@ class TestOr:
         document = Document(id='test', content_type='application/json')
         with pytest.raises(ConstraintsErrors) as exc:
             _or(document)
-
-        assert list(exc.value) == [
-            Error('Expected text/plain and not application/json.'),
-            Error('Expected text/html and not application/json.'),
-        ]
+            assert list(exc.value) == [
+                ConstraintError('Expected text/plain, got application/json.'),
+                ConstraintError('Expected text/html, got application/json.'),
+            ]
 
     def test_stacked_or(self):
         import pytest
@@ -144,9 +144,9 @@ class TestOr:
             _or(document)
 
         assert list(exc.value) == [
-            Error('Expected text/plain and not application/json.'),
-            Error('Expected text/html and not application/json.'),
-            Error('Body is empty.'),
+            ConstraintError('Expected text/plain, got application/json.'),
+            ConstraintError('Expected text/html, got application/json.'),
+            ConstraintError('Body is empty.'),
         ]
 
         _or = Or((
@@ -163,8 +163,8 @@ class TestOr:
             _or(document)
 
         assert list(exc.value) == [
-            Error('Expected text/plain and not application/json.'),
-            Error('Expected text/html and not application/json.'),
-            Error('The item must not be a test document.'),
-            Error('Body is empty.'),
+            ConstraintError('Expected text/plain, got application/json.'),
+            ConstraintError('Expected text/html, got application/json.'),
+            ConstraintError('The item must not be a test document.'),
+            ConstraintError('Body is empty.'),
         ]
