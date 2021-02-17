@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Tuple, Optional, Callable, Any, Union
+from typing import Iterable, Tuple, Optional, Callable, Union
 from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
 
 

@@ -1,6 +1,5 @@
 from functools import wraps
 from typing import Callable, Any
-from roughrider.predicate.validators import Constraint
 from roughrider.predicate.errors import ConstraintError
 
 
@@ -18,6 +17,6 @@ def with_predicates(predicates, handler=None):
                     if handler is not None:
                         return handler(exc)
                     raise
-            return wrapped(*args, **kwargs)
+            return func(*args, **kwargs)
         return assert_predicates
     return predication_wrapper

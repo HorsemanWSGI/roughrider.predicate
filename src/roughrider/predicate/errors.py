@@ -1,7 +1,7 @@
 import json
 from http import HTTPStatus
 from dataclasses import dataclass, InitVar, asdict
-from typing import List, NamedTuple, Iterable, TypeVar
+from typing import List, Iterable, TypeVar
 
 
 HTTPCode = TypeVar('HTTPCode', HTTPStatus, int)
