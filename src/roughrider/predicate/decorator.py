@@ -1,9 +1,12 @@
 from functools import wraps
 import typing as t
-from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
+from roughrider.predicate import errors
 
 
-Error = t.Union[HTTPConstraintError, ConstraintError, ConstraintsErrors]
+Error = t.Union[
+    errors.ConstraintError,
+    errors.ConstraintsErrors
+]
 Predicates = t.Iterable[t.Callable[[...], t.Any]]
 PredicateErrorHandler = t.Callable[[Error], t.Any]
 
