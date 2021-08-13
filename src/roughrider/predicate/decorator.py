@@ -4,7 +4,7 @@ from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
 
 
 Error = t.Union[HTTPConstraintError, ConstraintError, ConstraintsErrors]
-Predicates = t.Iterable[t.Callable[[...], t.Any]
+Predicates = t.Iterable[t.Callable[[...], t.Any]]
 PredicateErrorHandler = t.Callable[[Error], t.Any]
 
 
