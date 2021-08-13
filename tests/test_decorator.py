@@ -10,7 +10,7 @@ def validate_document(doc):
     if not getattr(doc, 'id', None):
         errors.append(ConstraintError('Document does not have an id'))
     if errors:
-        raise ConstraintsErrors(errors)
+        raise ConstraintsErrors(*errors)
 
 
 def test_simple_decorator():
@@ -19,5 +19,7 @@ def test_simple_decorator():
     def handle_doc(doc):
         pass
 
-    with pytest.raises(ConstraintsErrors):
+    with pytest.raises(ConstraintsErrors) as err:
         handle_doc(None)
+
+    assert err.value.json() == '''[{"message": "Document is empty"}, {"message": "Document does not have an id"}]'''
