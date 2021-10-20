@@ -168,3 +168,17 @@ class TestOr:
             ConstraintError('The item must not be a test document.'),
             ConstraintError('Body is empty.'),
         ]
+
+    def test_resolve_Or(self):
+        _or = Or((
+            ContentType('text/plain'),
+            Or((ContentType('text/html'), non_empty_document))
+        ))
+
+        document = Document(id='test', content_type='application/json')
+        errors = resolve_validators(_or, document)
+        assert errors == ConstraintsErrors(
+            ConstraintError('Expected text/plain, got application/json.'),
+            ConstraintError('Expected text/html, got application/json.'),
+            ConstraintError('Body is empty.')
+        )

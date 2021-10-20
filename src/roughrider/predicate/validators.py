@@ -43,6 +43,6 @@ def resolve_validators(
         except ConstraintError as exc:
             errors.append(exc)
         except ConstraintsErrors as exc:
-            errors.extends(exc.errors)
+            errors.extend(exc.errors)
     if errors:
         return ConstraintsErrors(*errors)
