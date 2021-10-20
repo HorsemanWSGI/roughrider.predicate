@@ -2,10 +2,9 @@ import os
 from setuptools import setup, find_packages
 from Cython.Build import cythonize
 
-version = "0.2"
+version = "0.3"
 
 install_requires = [
-    'cython'
 ]
 
 test_requires = [

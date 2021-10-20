@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.3 (2021-10-21)
+----------------
+
+  * Code reorganization and Cython optimizations.
+
+
 0.2 (2021-10-20)
 ----------------
 
