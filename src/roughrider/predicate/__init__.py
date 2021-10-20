@@ -1,5 +1,8 @@
-from .validators import Or, Validator, resolve_validators
 from .errors import ConstraintError, HTTPConstraintError, ConstraintsErrors
+from .validators import Or
+from .utils import resolve_constraints
+from .decorator import with_predicates
+
 
 
 __all__ = [
@@ -7,6 +10,6 @@ __all__ = [
     'Error',
     'HTTPConstraintError',
     'Or',
-    'Validator',
-    'resolve_validators',
+    'resolve_constraints',
+    'with_predicates'
 ]

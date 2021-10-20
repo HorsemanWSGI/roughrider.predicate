@@ -1,26 +1,19 @@
 from functools import wraps
-import typing as t
-from roughrider.predicate import errors
-
-
-Error = t.Union[
-    errors.ConstraintError,
-    errors.ConstraintsErrors
-]
-Predicates = t.Iterable[t.Callable[..., t.Any]]
-PredicateErrorHandler = t.Callable[[Error], t.Any]
+from typing import Optional
+from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
+from roughrider.predicate.types import Predicates, PredicateErrorHandler
 
 
 def with_predicates(
-        predicates: Predicates, handler: PredicateErrorHandler = None):
+        predicates: Predicates,
+        handler: Optional[PredicateErrorHandler] = None):
     def predication_wrapper(func):
         @wraps(func)
         def assert_predicates(*args, **kwargs):
             for predicate in predicates:
                 try:
                     predicate(*args, **kwargs)
-                except (errors.ConstraintError,
-                        errors.ConstraintsErrors) as exc:
+                except (ConstraintError, ConstraintsErrors) as exc:
                     if handler is not None:
                         return handler(exc)
                     raise

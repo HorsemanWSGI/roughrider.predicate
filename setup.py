@@ -37,7 +37,10 @@ setup(
     namespace_packages=['roughrider',],
     include_package_data=True,
     zip_safe=False,
-    ext_modules = cythonize('src/roughrider/predicate/errors.pyx'),
+    ext_modules = cythonize([
+        "src/roughrider/predicate/errors.pyx",
+        "src/roughrider/predicate/utils.pyx",
+    ]),
     install_requires=install_requires,
     extras_require={
         'test': test_requires,

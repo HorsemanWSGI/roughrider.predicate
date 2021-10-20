@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from roughrider.predicate.errors import ConstraintError, ConstraintsErrors
-from roughrider.predicate.validators import Validator, Or, resolve_validators
+from roughrider.predicate.validators import Or
+from roughrider.predicate.utils import resolve_constraints
+from roughrider.predicate.types import Predicate
 
 
 @dataclass
@@ -24,7 +26,7 @@ def must_be_real_document(item):
         raise ConstraintError('The item must not be a test document.')
 
 
-class ContentType(Validator):
+class ContentType:
 
     def __init__(self, content_type):
         self.ct = content_type
@@ -39,25 +41,25 @@ class TestFunctionValidators:
 
     def test_single_resolution(self):
         document = Document(id='test', body='This is a test.')
-        errors = resolve_validators([non_empty_document], document)
+        errors = resolve_constraints([non_empty_document], document)
         assert errors is None
 
         document = Document(id='test', body='')
-        errors = resolve_validators([non_empty_document], document)
+        errors = resolve_constraints([non_empty_document], document)
         assert isinstance(errors, ConstraintsErrors)
         assert list(errors) == [ConstraintError('Body is empty.')]
 
 
     def test_multiple_resolution(self):
         document = Document(id='test', body='This is a test.')
-        errors = resolve_validators(
+        errors = resolve_constraints(
             [non_empty_document, must_be_real_document], document)
         assert list(errors) == [
             ConstraintError('The item must not be a test document.')
         ]
 
         document = Document(id='test')
-        errors = resolve_validators(
+        errors = resolve_constraints(
             [non_empty_document, must_be_real_document], document)
         assert list(errors) == [
             ConstraintError('Body is empty.'),
@@ -70,10 +72,10 @@ class TestValidators:
     def test_single_resolution(self):
         document = Document(id='test', body='This is a test.')
         assert document.content_type == 'text/plain'
-        errors = resolve_validators([ContentType('text/plain')], document)
+        errors = resolve_constraints([ContentType('text/plain')], document)
         assert errors is None
 
-        errors = resolve_validators([ContentType('text/html')], document)
+        errors = resolve_constraints([ContentType('text/html')], document)
         assert list(errors) == [
             ConstraintError('Expected text/html, got text/plain.')
         ]
@@ -81,7 +83,7 @@ class TestValidators:
     def test_multiple_resolution(self):
         document = Document(id='test', body='This is a test.')
         assert document.content_type == 'text/plain'
-        errors = resolve_validators([
+        errors = resolve_constraints([
             ContentType('text/plain'),
             must_be_real_document
         ], document)
@@ -89,7 +91,7 @@ class TestValidators:
             ConstraintError('The item must not be a test document.')
         ]
 
-        errors = resolve_validators([
+        errors = resolve_constraints([
             ContentType('text/html'),
             must_be_real_document
         ], document)
@@ -103,7 +105,7 @@ class TestValidators:
             body='<html></html>',
             content_type='text/html'
         )
-        errors = resolve_validators([
+        errors = resolve_constraints([
             ContentType('text/html'),
             must_be_real_document
         ], document)
@@ -111,6 +113,18 @@ class TestValidators:
 
 
 class TestOr:
+
+    def test_typing(self):
+        import typing as t
+
+        _or = Or()
+        assert isinstance(_or, tuple)
+        assert isinstance(_or, t.Callable)
+        assert _or == tuple()
+
+    def test_empty_or(self):
+        _or = Or()
+        assert _or() is None
 
     def test_basic_usage(self):
         import pytest
@@ -176,7 +190,7 @@ class TestOr:
         ))
 
         document = Document(id='test', content_type='application/json')
-        errors = resolve_validators(_or, document)
+        errors = resolve_constraints(_or, document)
         assert errors == ConstraintsErrors(
             ConstraintError('Expected text/plain, got application/json.'),
             ConstraintError('Expected text/html, got application/json.'),

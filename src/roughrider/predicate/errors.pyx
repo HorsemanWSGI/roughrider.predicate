@@ -30,8 +30,8 @@ cdef class HTTPConstraintError(ConstraintError):
     cdef readonly unsigned int status
 
     def __init__(self, message: str, status: HTTPCode = 400):
+        self.message = message
         self.status = HTTPStatus(status)
-        super().__init__(message)
 
     def __eq__(self, error):
         if isinstance(error, self.__class__):
@@ -62,5 +62,5 @@ cdef class ConstraintsErrors(Exception):
             return self.errors == other
         return False
 
-    def json(self):
+    cpdef str json(self):
         return json.dumps([e.to_dict() for e in self.errors])
