@@ -10,7 +10,8 @@ class Validator(ABC):
 
     @abstractmethod
     def __call__(self, *args, **namespace) -> None:
-        """Raises a roughrider.predicate.ConstraintError if the validation failed.
+        """Raises a `roughrider.predicate.ConstraintError`
+        if the validation failed.
         """
 
 

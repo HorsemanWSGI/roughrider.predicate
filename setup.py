@@ -1,10 +1,11 @@
 import os
 from setuptools import setup, find_packages
-
+from Cython.Build import cythonize
 
 version = "0.2"
 
 install_requires = [
+    'cython'
 ]
 
 test_requires = [
@@ -36,6 +37,7 @@ setup(
     namespace_packages=['roughrider',],
     include_package_data=True,
     zip_safe=False,
+    ext_modules = cythonize('src/roughrider/predicate/errors.pyx'),
     install_requires=install_requires,
     extras_require={
         'test': test_requires,

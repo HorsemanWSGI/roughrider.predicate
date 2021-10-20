@@ -9,21 +9,15 @@ def test_httperror_malformed():
         HTTPConstraintError()
 
     assert str(exc.value) == (
-        "__init__() missing 2 required positional arguments: "
-        "'message' and 'status'"
+        "__init__() takes at least 1 positional argument (0 given)"
     )
 
     with pytest.raises(TypeError) as exc:
-        HTTPConstraintError(message='test')
+        HTTPConstraintError(status=303)
 
     assert str(exc.value) == (
-        "__init__() missing 1 required positional argument: 'status'")
-
-    with pytest.raises(TypeError) as exc:
-        HTTPConstraintError(status=200)
-
-    assert str(exc.value) == (
-        "__init__() missing 1 required positional argument: 'message'")
+        "__init__() takes at least 1 positional argument (0 given)"
+    )
 
     with pytest.raises(ValueError) as exc:
         HTTPConstraintError(message='test', status='abc')
@@ -32,8 +26,11 @@ def test_httperror_malformed():
 
 
 def test_httperror():
-    error = HTTPConstraintError(message='test', status=400)
-    assert error == HTTPConstraintError(message='test', status=400)
+    error = HTTPConstraintError(message='test')
+    assert error.status == 400
+
+    error = HTTPConstraintError(message='test', status=404)
+    assert error == HTTPConstraintError(message='test', status=404)
 
     with pytest.raises(AttributeError) as exc:
         error.message = 'I am immutable'
