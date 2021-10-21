@@ -1,11 +1,15 @@
 CHANGES
 =======
 
+0.3.1 (2021-10-21)
+------------------
+
+  * Changing packaging of extensions.
+
 0.3 (2021-10-21)
 ----------------
 
   * Code reorganization and Cython optimizations.
-
 
 0.2 (2021-10-20)
 ----------------

@@ -1,8 +1,7 @@
 import os
-from setuptools import setup, find_packages
-from Cython.Build import cythonize
+from setuptools import setup, Extension, find_packages
 
-version = "0.3"
+version = "0.3.1"
 
 install_requires = [
 ]
@@ -36,10 +35,18 @@ setup(
     namespace_packages=['roughrider',],
     include_package_data=True,
     zip_safe=False,
-    ext_modules = cythonize([
-        "src/roughrider/predicate/errors.pyx",
-        "src/roughrider/predicate/utils.pyx",
-    ]),
+    ext_modules=[
+        Extension(
+            "roughrider.predicate.errors",
+            ["src/roughrider/predicate/errors.c"],
+            extra_compile_args=["-O3"],  # Max optimization when compiling.
+        ),
+        Extension(
+            "roughrider.predicate.utils",
+            ["src/roughrider/predicate/utils.c"],
+            extra_compile_args=["-O3"],  # Max optimization when compiling.
+        ),
+    ],
     install_requires=install_requires,
     extras_require={
         'test': test_requires,

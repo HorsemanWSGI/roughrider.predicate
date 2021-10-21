@@ -15,7 +15,7 @@ Below is an example of a validation on a content item.
 
   from dataclasses import dataclass
   from roughrider.predicate.errors import ConstraintError
-  from roughrider.predicate.validators import Validator, Or
+  from roughrider.predicate.validators import Or
 
 
   @dataclass
@@ -32,7 +32,7 @@ Below is an example of a validation on a content item.
           raise ConstraintError('Body is empty.')
 
 
-  class ContentType(Validator):
+  class ContentType:
 
       def __init__(self, content_type):
           self.ct = content_type
