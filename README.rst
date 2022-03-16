@@ -1,6 +1,9 @@
 roughrider.predicate
 ********************
 
+**This project was superseeded by the package `prejudice`. Please consider migrating.**
+
+
 This package helps defining and creating small and reusable components
 that can serve as guard or validation methods.
 
